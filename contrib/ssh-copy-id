@@ -230,7 +230,7 @@ filter_ids() {
       -o ControlPath=none \
       -o LogLevel=INFO \
       -o PreferredAuthentications=publickey \
-      -o IdentitiesOnly=yes "$@" exit >"$L_OUTPUT_FILE" 2>&1 </dev/null
+      -o IdentitiesOnly=yes "$@" exit 0 >"$L_OUTPUT_FILE" 2>&1 </dev/null
     if [ "$?" = "$L_SUCCESS" ] || {
          [ "$SFTP" ] && grep 'allows sftp connections only' "$L_OUTPUT_FILE" >/dev/null
          # this error counts as a success if we're setting up an sftp connection

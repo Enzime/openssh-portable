@@ -1141,8 +1141,18 @@ parse_uri(const char *scheme, const char *uri, char **userp, char **hostp,
 	/* Extract mandatory hostname */
 	if ((cp = hpdelim2(&tmp, &ch)) == NULL || *cp == '\0')
 		goto out;
+	/* Bracketed hostnames are only allowed for IPv6 addresses */
+	if (*cp == '[' && strchr(cp, ':') == NULL)
+		goto out;
 	host = xstrdup(cleanhostname(cp));
-	if (!valid_domain(host, 0, NULL))
+	/*
+	 * Validate hostname, but skip for numeric addresses:
+	 * - IPv6 addresses contain ':'
+	 * - IPv4 addresses contain only digits and '.'
+	 */
+	if (strchr(host, ':') == NULL &&
+	    strspn(host, "0123456789.") != strlen(host) &&
+	    !valid_domain(host, 0, NULL))
 		goto out;
 
 	if (tmp != NULL && *tmp != '\0') {
